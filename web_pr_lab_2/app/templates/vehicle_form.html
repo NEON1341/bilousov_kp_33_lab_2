@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ 'Редагування' if car else 'Додавання' }} авто</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light p-5">
+    <div class="container">
+        <h1 class="mb-4 text-center">
+            {% if car %}
+                Авто #{{ car.car_id }}: {{ car.manufacturer.title }} {{ car.car_model }}
+            {% else %}
+                Нове авто
+            {% endif %}
+        </h1>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="alert alert-danger">
+              {% for message in messages %}
+                <div>{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="border p-4 bg-white rounded shadow-sm">
+            <div class="mb-3">
+                <label for="car_model" class="form-label">Модель:</label>
+                <input type="text" id="car_model" name="car_model" value="{{ car.car_model if car else '' }}" required class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label for="paint_color" class="form-label">Колір:</label>
+                <input type="text" id="paint_color" name="paint_color" value="{{ car.paint_color if car else '' }}" required class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label for="production_year" class="form-label">Рік випуску:</label>
+                <input type="number" id="production_year" name="production_year"
+                       value="{{ car.production_year if car else '' }}"
+                       min="2000" max="2025" required class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label for="manufacturer_ref" class="form-label">Виробник:</label>
+                <select id="manufacturer_ref" name="manufacturer_ref" required class="form-select">
+                    {% for manufacturer in manufacturers %}
+                        <option value="{{ manufacturer.manufacturer_id }}"
+                            {% if car and car.manufacturer_ref == manufacturer.manufacturer_id %}selected{% endif %}>
+                            {{ manufacturer.title }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-success">{{ 'Оновити' if car else 'Додати' }}</button>
+                <a href="{{ url_for('main.index') }}" class="btn btn-secondary">Назад</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
